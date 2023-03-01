@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { User, CodeType, UserInfo } from '@/types/user'
+import type { User, CodeType, UserInfo, Patient } from '@/types/user'
 
 // 密码登录
 export const loginByPassword = (mobile: string, password: string) => {
@@ -19,4 +19,24 @@ export const loginByMobile = (mobile: string, code: string) => {
 // 获取个人信息
 export const getUserInfo = () => {
   return request<UserInfo>('/patient/myUser')
+}
+
+// 获取患者信息
+export const getPatientList = () => {
+  return request<Patient[]>('patient/myList')
+}
+
+// 添加患者业务
+export const addPatient = (patient: Patient) => {
+  return request('/patient/add', 'post', patient)
+}
+
+// 编辑患者信息
+export const editPatient = (patient: Patient) => {
+  return request('/patient/update', 'put', patient)
+}
+
+// 删除患者信息
+export const delPatient = (id: string) => {
+  return request(`/patient/del/${id}`, 'delete')
 }
