@@ -1,7 +1,5 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>App组件</div>
+  <router-view />
 </template>
-
-<style scoped></style>
