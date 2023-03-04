@@ -3,9 +3,15 @@ import type {
   PageParams,
   FollowType,
   KnowledgeParams,
-  KnowledgePage
+  KnowledgePage,
+  TopDep,
+  Image,
+  ConsultOrderPreParams,
+  ConsultOrderPreData,
+  PartialConsult
 } from '@/types/consult'
 import { request } from '@/utils/request'
+import type { Patient } from '@/types/user'
 
 // 获取文章信息
 export const getKnowledgePage = (params: KnowledgeParams) =>
@@ -19,3 +25,39 @@ export const getDoctorPage = (params: PageParams) => {
 // 关注医生
 export const followOrUnfollow = (id: string, type: FollowType = 'doc') =>
   request('/like', 'POST', { id, type })
+
+// 查询所有科室
+export const getAllDep = () => {
+  return request<TopDep[]>('/dep/all')
+}
+
+// 上传图片
+export const uploadImage = (file: File) => {
+  const fd = new FormData()
+  fd.append('file', file)
+  return request<Image>('/upload', 'post', fd)
+}
+
+// 拉取预支付订单信息
+export const getConsultOrderPre = (params: ConsultOrderPreParams) => {
+  return request<ConsultOrderPreData>('/patient/consult/order/pre', 'get', params)
+}
+
+// 查询患者详情
+export const getPatientDetail = (id: string) => {
+  return request<Patient>(`/patient/info/${id}`)
+}
+
+// 生成订单
+export const createConsultOrder = (data: PartialConsult) => {
+  return request<{ id: string }>('/patient/consult/order', 'POST', data)
+}
+
+// 获取支付地址  0 是微信  1 支付宝
+export const getConsultOrderPayUrl = (params: {
+  paymentMethod: 0 | 1
+  orderId: string
+  payCallback: string
+}) => {
+  return request<{ payUrl: string }>('/patient/consult/pay', 'post', params)
+}
