@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Message, Prescription } from '@/types/room'
-import { MsgType, ConsultTime, PrescriptionStatus } from '@/enums'
-import { consultFlagOptions, illnessTimeOptions } from '@/services/constants'
+import { MsgType, PrescriptionStatus } from '@/enums'
+import { getIllnessTimeText, getConsultFlagText } from '@/utils/filter'
 import type { Image } from '@/types/consult'
 import { showImagePreview, showToast } from 'vant'
 import { useUserStore } from '@/stores'
@@ -12,12 +12,6 @@ import EvaluateCard from '@/views/Room/components/EvaluateCard.vue'
 
 defineProps<{ list: Message[] }>()
 
-const getIllnessTimeText = (time: ConsultTime) => {
-  return illnessTimeOptions.find((item) => item.value === time)?.label
-}
-const getConsultFlagText = (flag: 0 | 1) => {
-  return consultFlagOptions.find((item) => item.value === flag)?.label
-}
 // 预览图片
 const previewImg = (pictures?: Image[]) => {
   if (pictures && pictures.length) {
