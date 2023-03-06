@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -8,9 +8,9 @@ NProgress.configure({
 })
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/login', component: () => import('@/views/Login/index.vue') },
+    { path: '/login', component: () => import('@/views/Login/index.vue'), meta: { title: '登录' } },
     {
       path: '/',
       component: () => import('@/views/Layout/index.vue'),
@@ -62,6 +62,14 @@ const router = createRouter({
       path: '/consult/pay',
       component: () => import('@/views/Consult/ConsultPay.vue'),
       meta: { title: '问诊支付' }
+    },
+    {
+      path: '/room',
+      component: () => import('@/views/Room/index.vue'),
+      meta: { title: '问诊室' },
+      beforeEnter(to) {
+        if (to.query.payResult === 'false') return '/user/consult'
+      }
     }
   ]
 })

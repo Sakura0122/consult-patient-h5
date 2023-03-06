@@ -8,7 +8,8 @@ import type {
   Image,
   ConsultOrderPreParams,
   ConsultOrderPreData,
-  PartialConsult
+  PartialConsult,
+  ConsultOrderItem
 } from '@/types/consult'
 import { request } from '@/utils/request'
 import type { Patient } from '@/types/user'
@@ -60,4 +61,25 @@ export const getConsultOrderPayUrl = (params: {
   payCallback: string
 }) => {
   return request<{ payUrl: string }>('/patient/consult/pay', 'post', params)
+}
+
+// 订单详情
+export const getConsultOrderDetail = (orderId: string) => {
+  return request<ConsultOrderItem>('/patient/consult/order/detail', 'get', { orderId })
+}
+
+// 查看处方
+export const getPrescriptionPic = (id: string) => {
+  return request<{ url: string }>(`/patient/consult/prescription/${id}`)
+}
+
+// 评价问诊
+export const evaluateConsultOrder = (data: {
+  docId: string
+  orderId: string
+  score: number
+  content: string
+  anonymousFlag: 0 | 1
+}) => {
+  return request<{ id: string }>('/patient/order/evaluate', 'post', data)
 }

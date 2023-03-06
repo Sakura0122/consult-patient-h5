@@ -1,23 +1,13 @@
 <script setup lang="ts">
 import type { ConsultIllness, Image } from '@/types/consult'
 import { ref, computed, onMounted } from 'vue'
-import { IllnessTime } from '@/enums'
 import { uploadImage } from '@/services/consult'
 import type { UploaderAfterRead, UploaderFileListItem } from 'vant/es/uploader/types'
 import { useConsultStore } from '@/stores/consult'
 import { useRouter } from 'vue-router'
 import { showConfirmDialog, showToast } from 'vant'
+import { illnessTimeOptions, consultFlagOptions } from '@/services/constants'
 
-const timeOptions = [
-  { label: '一周内', value: IllnessTime.Week },
-  { label: '一月内', value: IllnessTime.Month },
-  { label: '半年内', value: IllnessTime.HalfYear },
-  { label: '大于半年', value: IllnessTime.More }
-]
-const flagOptions = [
-  { label: '就诊过', value: 0 },
-  { label: '没就诊过', value: 1 }
-]
 const form = ref<ConsultIllness>({
   illnessDesc: '',
   illnessTime: undefined,
@@ -114,11 +104,11 @@ onMounted(() => {
       ></van-field>
       <div class="item">
         <p>本次患病多久了？</p>
-        <cp-radio-btn :options="timeOptions" v-model="form.illnessTime" />
+        <cp-radio-btn :options="illnessTimeOptions" v-model="form.illnessTime" />
       </div>
       <div class="item">
         <p>此次病情是否去医院就诊过？</p>
-        <cp-radio-btn :options="flagOptions" v-model="form.consultFlag" />
+        <cp-radio-btn :options="consultFlagOptions" v-model="form.consultFlag" />
       </div>
       <div class="illness-img">
         <van-uploader
