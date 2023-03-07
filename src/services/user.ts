@@ -6,6 +6,16 @@ export const loginByPassword = (mobile: string, password: string) => {
   return request<User>('/login/password', 'post', { mobile, password })
 }
 
+// QQ登录
+export const loginByQQ = (openId: string) => {
+  return request<User>('/login/thirdparty', 'POST', { openId, source: 'qq' })
+}
+
+// 绑定手机号
+export const bindMobile = (data: { mobile: string; code: string; openId: string }) => {
+  return request<User>('/login/binding', 'POST', data)
+}
+
 // 获取短信验证码
 export const sendMobileCode = (mobile: string, type: CodeType) => {
   return request('/code', 'get', { mobile, type })

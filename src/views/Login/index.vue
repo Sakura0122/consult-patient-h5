@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue'
+import { ref } from 'vue'
 import { codeRules, mobileRules, passwordRules } from '@/utils/rules'
 import { showToast } from 'vant'
-import type { FormInstance } from 'vant'
-import { loginByMobile, loginByPassword, sendMobileCode } from '@/services/user'
+import { loginByMobile, loginByPassword } from '@/services/user'
 import { useUserStore } from '@/stores'
 import { useRouter, useRoute } from 'vue-router'
+import { useMobileCode } from '@/hooks'
 
 // 用户协议勾选
 const agree = ref(false)
@@ -38,28 +38,34 @@ const code = ref('')
 // 1. API接口调用函数
 // 2. 发送短信验证码： 判断是否正在倒计时 校验输入框  调用短信接口
 // 3. 接口成功，倒计时，组件销毁要清理定时器
-const time = ref(0)
-const formRef = ref<FormInstance>()
-let timerId: number
-const send = async () => {
-  if (time.value > 0) return
-  await formRef.value?.validate('mobile')
-  // 上面校验成功发送验证码
-  await sendMobileCode(mobile.value, 'login')
-  showToast('发送成功')
-  // 开启倒计时
-  time.value = 60
-  if (timerId) clearInterval(timerId)
-  timerId = setInterval(() => {
-    time.value--
-    if (time.value <= 0) clearInterval(timerId)
-  }, 1000)
-}
+const { formRef, time, send } = useMobileCode(mobile, 'login')
 
-// 组件销毁
-onUnmounted(() => {
-  clearInterval(timerId)
-})
+// const time = ref(0)
+// const formRef = ref<FormInstance>()
+// let timerId: number
+// const send = async () => {
+//   if (time.value > 0) return
+//   await formRef.value?.validate('mobile')
+//   // 上面校验成功发送验证码
+//   await sendMobileCode(mobile.value, 'login')
+//   showToast('发送成功')
+//   // 开启倒计时
+//   time.value = 60
+//   if (timerId) clearInterval(timerId)
+//   timerId = setInterval(() => {
+//     time.value--
+//     if (time.value <= 0) clearInterval(timerId)
+//   }, 1000)
+// }
+//
+// // 组件销毁
+// onUnmounted(() => {
+//   clearInterval(timerId)
+// })
+
+const qqUrl = `https://graph.qq.com/oauth2.0/authorize?client_id=102015968&response_type=token&scope=all&redirect_uri=${encodeURIComponent(
+  import.meta.env.VITE_APP_CALLBACK + '/login/callback'
+)}`
 </script>
 
 <template>
@@ -119,7 +125,9 @@ onUnmounted(() => {
     <div class="login-other">
       <van-divider>第三方登录</van-divider>
       <div class="icon">
-        <img src="@/assets/qq.svg" alt="" />
+        <a @click="userStore.setReturnUrl($route.query.returnUrl as string)" :href="qqUrl">
+          <img src="@/assets/qq.svg" alt="" />
+        </a>
       </div>
     </div>
   </div>

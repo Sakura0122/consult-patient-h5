@@ -6,11 +6,18 @@ import Components from 'unplugin-vue-components/vite'
 import { VantResolver } from 'unplugin-vue-components/resolvers'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import path from 'path'
+import { createHtmlPlugin } from 'vite-plugin-html'
+import { viteMockServe } from 'vite-plugin-mock'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    viteMockServe({
+      mockPath: './src/mock',
+      localEnabled: true
+    }),
     vue(),
+    createHtmlPlugin(),
     // 自动导入的插件，解析器可以是 vant element and-vue
     Components({
       dts: false,
@@ -26,5 +33,10 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  server: {
+    port: 80,
+    host: true,
+    open: true
   }
 })

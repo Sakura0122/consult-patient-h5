@@ -1,10 +1,13 @@
 import type { ConsultOrderItem, FollowType } from '@/types/consult'
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, type Ref, ref } from 'vue'
 import { cancelOrder, deleteOrder, followOrUnfollow, getPrescriptionPic } from '@/services/consult'
 import { showFailToast, showImagePreview, showSuccessToast } from 'vant'
+import type { FormInstance } from 'vant'
 import { OrderType } from '@/enums'
 import type { OrderDetail } from '@/types/order'
 import { getMedicalOrderDetail } from '@/services/order'
+import type { CodeType } from '@/types/user'
+import { sendMobileCode } from '@/services/user'
 
 // 关注功能
 export const useFollow = (type: FollowType = 'doc') => {
@@ -85,4 +88,28 @@ export const useOrderDetail = (id: string) => {
     }
   })
   return { order, loading }
+}
+
+// 发送短信验证码逻辑
+export const useMobileCode = (mobile: Ref<string>, type: CodeType = 'login') => {
+  const formRef = ref<FormInstance>()
+  const time = ref(0)
+  let timeId: number
+  const send = async () => {
+    if (time.value > 0) return
+    await formRef.value?.validate('mobile')
+    await sendMobileCode(mobile.value, type)
+    showSuccessToast('发送成功')
+    time.value = 60
+    // 倒计时
+    clearInterval(timeId)
+    timeId = window.setInterval(() => {
+      time.value--
+      if (time.value <= 0) window.clearInterval(timeId)
+    }, 1000)
+  }
+  onUnmounted(() => {
+    window.clearInterval(timeId)
+  })
+  return { formRef, time, send }
 }

@@ -100,6 +100,11 @@ const router = createRouter({
       path: '/order/logistics/:id',
       component: () => import('@/views/Order/OrderLogistics.vue'),
       meta: { title: '物流详情' }
+    },
+    {
+      path: '/login/callback',
+      component: () => import('@/views/Login/LoginCallback.vue'),
+      meta: { title: 'QQ登录-绑定手机' }
     }
   ]
 })
@@ -109,7 +114,7 @@ router.beforeEach((to) => {
   NProgress.start()
   const userStore = useUserStore()
   // 不需要登录的页面，白名单
-  const whiteList = ['/login']
+  const whiteList = ['/login', '/login/callback']
   // 需求：当你没有登录也就是没有token 且 你访问的不是登录页面  拦截到登录
   if (!userStore.user?.token && !whiteList.includes(to.path)) return '/login'
 })
