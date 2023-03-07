@@ -8,6 +8,7 @@ const props = defineProps<{
   actualPayment: number
   onClose?: () => void
   show: boolean
+  payCallback: string
 }>()
 const emit = defineEmits<{
   (e: 'update:show', val: boolean): void
@@ -20,9 +21,9 @@ const pay = async () => {
   if (paymentMethod.value === undefined) return showToast('请选择支付方式')
   showLoadingToast('跳转支付')
   const res = await getConsultOrderPayUrl({
-    orderId: props.orderId,
     paymentMethod: paymentMethod.value,
-    payCallback: 'http://localhost:5173/room'
+    orderId: props.orderId,
+    payCallback: import.meta.env.VITE_APP_CALLBACK + props.payCallback
   })
   window.location.href = res.data.payUrl
 }

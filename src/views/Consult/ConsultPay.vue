@@ -163,6 +163,7 @@ onMounted(() => {
       :orderId="orderId"
       :onClose="onClose"
       v-model:show="show"
+      pay-callback="/room"
     ></cp-pay-sheet>
   </div>
   <div class="consult-pay-page" v-else>
